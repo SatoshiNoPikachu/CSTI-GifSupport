@@ -1,0 +1,22 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GifSupport", "GifSupport\GifSupport.csproj", "{6899D09D-6CE7-4E2D-A252-87A89B910409}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GifSupport.JsonData", "GifSupport.JsonData\GifSupport.JsonData.csproj", "{2CB3A2DF-9F06-4770-A9F0-96D0C8E47A49}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{6899D09D-6CE7-4E2D-A252-87A89B910409}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6899D09D-6CE7-4E2D-A252-87A89B910409}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6899D09D-6CE7-4E2D-A252-87A89B910409}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6899D09D-6CE7-4E2D-A252-87A89B910409}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2CB3A2DF-9F06-4770-A9F0-96D0C8E47A49}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2CB3A2DF-9F06-4770-A9F0-96D0C8E47A49}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2CB3A2DF-9F06-4770-A9F0-96D0C8E47A49}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2CB3A2DF-9F06-4770-A9F0-96D0C8E47A49}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal
