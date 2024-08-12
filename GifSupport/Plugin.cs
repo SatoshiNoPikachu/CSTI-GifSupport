@@ -10,7 +10,7 @@ internal class Plugin : BaseUnityPlugin
 {
     private const string PluginGuid = "Pikachu.CSTIMod.GifSupport";
     public const string PluginName = "GifSupport";
-    public const string PluginVersion = "1.0.0";
+    public const string PluginVersion = "1.0.1";
 
     public static Plugin Instance = null!;
     public static ManualLogSource Log = null!;

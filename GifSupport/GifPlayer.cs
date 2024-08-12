@@ -18,7 +18,7 @@ public class GifPlayer : MonoBehaviour
     /// <summary>
     /// 播放状态
     /// </summary>
-    public PlayStatus Status { get; private set; } = PlayStatus.Idle;
+    public PlayStatus Status { get; private set; } = PlayStatus.End;
 
     /// <summary>
     /// Image组件
@@ -57,7 +57,7 @@ public class GifPlayer : MonoBehaviour
 
     private void OnDisable()
     {
-        StopPlay();
+        if (Status is not PlayStatus.End) StopPlay();
     }
 
     /// <summary>
@@ -71,9 +71,10 @@ public class GifPlayer : MonoBehaviour
 
         if (gif is null) return;
         Gif = gif;
+        Loop = loop;
+        Status = PlayStatus.Idle;
         // Image.sprite = null;
         // Image.overrideSprite = null;
-        Loop = loop;
 
         StartPlay(true);
     }
@@ -120,8 +121,19 @@ public class GifPlayer : MonoBehaviour
     /// </summary>
     private void StopPlay()
     {
-        Status = PlayStatus.Idle;
         StopAllCoroutines();
+        Status = PlayStatus.Idle;
+    }
+
+    /// <summary>
+    /// 重置
+    /// </summary>
+    public void Reset()
+    {
+        StopAllCoroutines();
+        Gif = null;
+        Loop = false;
+        Status = PlayStatus.End;
     }
 
     /// <summary>

@@ -43,8 +43,21 @@ public class GifPlaySet
         if (!image) return;
         var player = image.gameObject.GetComponent<GifPlayer>();
         if (!player) player = image.gameObject.AddComponent<GifPlayer>();
-        
+
         image.overrideSprite = null;
         Apply(player);
+    }
+
+    /// <summary>
+    /// 清除设置
+    /// </summary>
+    /// <param name="image">图像组件</param>
+    public static void Clear(Image image)
+    {
+        if (!image) return;
+        var player = image.gameObject.GetComponent<GifPlayer>();
+        if (!player) return;
+
+        player.Reset();
     }
 }

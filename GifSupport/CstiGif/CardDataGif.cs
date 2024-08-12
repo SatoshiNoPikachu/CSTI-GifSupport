@@ -75,10 +75,20 @@ public class CardDataGif : ScriptableObject
     {
         var card = graphics?.CardLogic;
         if (!card?.CardModel) return;
-        if (!CardDict.TryGetValue(card.CardModel, out var cardGif)) return;
+        if (!CardDict.TryGetValue(card.CardModel, out var cardGif))
+        {
+            GifPlaySet.Clear(graphics.CardBG);
+            GifPlaySet.Clear(graphics.CardImage);
+            return;
+        }
 
-        cardGif.CardBackgroundGif?.Apply(graphics.CardBG);
-        cardGif.GetCurrentSet(graphics)?.Apply(graphics.CardImage);
+        var gif = cardGif.CardBackgroundGif;
+        if (gif is not null) gif.Apply(graphics.CardBG);
+        else GifPlaySet.Clear(graphics.CardBG);
+
+        gif = cardGif.GetCurrentSet(graphics);
+        if (gif is not null) gif.Apply(graphics.CardImage);
+        else GifPlaySet.Clear(graphics.CardImage);
     }
 
     private GifPlaySet GetCurrentSet(CardGraphics graphics)
