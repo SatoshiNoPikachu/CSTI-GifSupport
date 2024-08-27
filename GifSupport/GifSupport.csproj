@@ -136,6 +136,7 @@
         <Compile Include="Helper.cs"/>
         <Compile Include="Patcher\CardGraphicsPatch.cs" />
         <Compile Include="Patcher\GameLoadPatch.cs"/>
+        <Compile Include="Patcher\InGameCardBasePatch.cs" />
         <Compile Include="Plugin.cs"/>
         <Compile Include="Properties\AssemblyInfo.cs"/>
     </ItemGroup>

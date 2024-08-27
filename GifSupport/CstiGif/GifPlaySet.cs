@@ -23,6 +23,11 @@ public class GifPlaySet
     public bool Loop;
 
     /// <summary>
+    /// 描述
+    /// </summary>
+    public LocalizedString Description;
+
+    /// <summary>
     /// 应用GIF设置
     /// </summary>
     /// <param name="player">播放器</param>

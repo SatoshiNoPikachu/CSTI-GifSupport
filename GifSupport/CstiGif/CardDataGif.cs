@@ -23,7 +23,7 @@ public class CardDataGif : ScriptableObject
 
     public LiquidSet[] LiquidGifs;
 
-    public DurabilitySet[] DurabilitySets;
+    public ConditionSet[] ConditionSets;
 
     [Serializable]
     public class LiquidSet
@@ -34,17 +34,28 @@ public class CardDataGif : ScriptableObject
     }
 
     [Serializable]
-    public class DurabilitySet
+    public class ConditionSet
     {
         public GifPlaySet Gif;
 
-        public DurabilityCondition[] Conditions;
+        public DurabilityCondition[] DurabilityConditions;
+
+        public StatCondition[] StatConditions;
 
         public bool Check(InGameCardBase card)
         {
             if (!card) return false;
-            return Conditions is not (null or { Length: < 1 }) &&
-                   Conditions.All(condition => condition?.Check(card) is true);
+            return CheckDurability(card) && CheckStat();
+        }
+
+        private bool CheckDurability(InGameCardBase card)
+        {
+            return DurabilityConditions?.All(condition => condition?.Check(card) is true) is true or null;
+        }
+
+        private bool CheckStat()
+        {
+            return StatConditions?.All(condition => condition?.Check() is true) is true or null;
         }
     }
 
@@ -82,6 +93,25 @@ public class CardDataGif : ScriptableObject
                 DurabilitiesTypes.Liquid => -1,
                 _ => -1
             };
+        }
+    }
+
+    [Serializable]
+    public class StatCondition
+    {
+        public GameStat Stat;
+
+        public float MinValue;
+
+        public float MaxValue;
+
+        public bool Check()
+        {
+            if (Stat is null) return false;
+            if (!GameManager.Instance.StatsDict.TryGetValue(Stat, out var stat)) return false;
+
+            var value = stat.CurrentValue(GameManager.Instance.NotInBase);
+            return value >= MinValue && value <= MaxValue;
         }
     }
 
@@ -146,13 +176,29 @@ public class CardDataGif : ScriptableObject
         else GifPlaySet.Clear(graphics.CardImage);
     }
 
-    private GifPlaySet GetCurrentSet(CardGraphics graphics)
+    public static void SetCarDesc(InGameCardBase card, ref string description, bool ignoreLiquid)
+    {
+        if (!card?.CardModel) return;
+        if (!CardDict.TryGetValue(card.CardModel, out var cardGif)) return;
+
+        var graphics = card.CardVisuals;
+        if (!graphics) return;
+
+        var set = cardGif.GetCurrentSet(graphics, ignoreLiquid);
+        if (set is null) return;
+
+        var desc = set.Description.ToString();
+        if (desc == "") return;
+        description = desc;
+    }
+
+    private GifPlaySet GetCurrentSet(CardGraphics graphics, bool ignoreLiquid = false)
     {
         var card = graphics.CardLogic;
 
-        if (DurabilitySets is not null)
+        if (ConditionSets is not null)
         {
-            foreach (var set in DurabilitySets)
+            foreach (var set in ConditionSets)
             {
                 if (set?.Gif is null || !set.Check(card)) continue;
                 return set.Gif;
@@ -165,7 +211,7 @@ public class CardDataGif : ScriptableObject
             if (graphics.CookingSprite) return null;
         }
 
-        if (!card.ContainedLiquid) return CardGif;
+        if (ignoreLiquid || !card.ContainedLiquid) return CardGif;
 
         var liquid = card.ContainedLiquidModel;
         if (!liquid) return CardGif;
