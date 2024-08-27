@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using GifSupport.Data;
 using UnityEngine;
 
@@ -22,12 +23,66 @@ public class CardDataGif : ScriptableObject
 
     public LiquidSet[] LiquidGifs;
 
+    public DurabilitySet[] DurabilitySets;
+
     [Serializable]
     public class LiquidSet
     {
         public int Index;
 
         public GifPlaySet LiquidGif;
+    }
+
+    [Serializable]
+    public class DurabilitySet
+    {
+        public GifPlaySet Gif;
+
+        public DurabilityCondition[] Conditions;
+
+        public bool Check(InGameCardBase card)
+        {
+            if (!card) return false;
+            return Conditions is not (null or { Length: < 1 }) &&
+                   Conditions.All(condition => condition?.Check(card) is true);
+        }
+    }
+
+    [Serializable]
+    public class DurabilityCondition
+    {
+        public DurabilitiesTypes DurabilityType;
+
+        public float MinValue;
+
+        public float MaxValue;
+
+        public bool Check(InGameCardBase card)
+        {
+            if (!card) return false;
+
+            var value = GetCurrentValue(card);
+            if (value < 0) return false;
+
+            return value >= MinValue && value <= MaxValue;
+        }
+
+        private float GetCurrentValue(InGameCardBase card)
+        {
+            return DurabilityType switch
+            {
+                DurabilitiesTypes.Spoilage => card.CurrentSpoilage,
+                DurabilitiesTypes.Usage => card.CurrentUsageDurability,
+                DurabilitiesTypes.Fuel => card.CurrentFuel,
+                DurabilitiesTypes.Progress => card.CurrentProgress,
+                DurabilitiesTypes.Special1 => card.CurrentSpecial1,
+                DurabilitiesTypes.Special2 => card.CurrentSpecial2,
+                DurabilitiesTypes.Special3 => card.CurrentSpecial3,
+                DurabilitiesTypes.Special4 => card.CurrentSpecial4,
+                DurabilitiesTypes.Liquid => -1,
+                _ => -1
+            };
+        }
     }
 
     static CardDataGif()
@@ -95,6 +150,15 @@ public class CardDataGif : ScriptableObject
     {
         var card = graphics.CardLogic;
 
+        if (DurabilitySets is not null)
+        {
+            foreach (var set in DurabilitySets)
+            {
+                if (set?.Gif is null || !set.Check(card)) continue;
+                return set.Gif;
+            }
+        }
+
         if (card.IsCooking())
         {
             if (CookingGif is not null) return CookingGif;
@@ -123,8 +187,8 @@ public class CardDataGif : ScriptableObject
         if (!tag) return DefaultLiquidGif ?? CardGif;
         if (LiquidGifs?.Length is not > 0) return null;
 
-        var set = LiquidGifs[index];
-        if (set is null || set.Index != index || set.LiquidGif is null) return null;
-        return set.LiquidGif;
+        var liquidSet = LiquidGifs[index];
+        if (liquidSet is null || liquidSet.Index != index || liquidSet.LiquidGif is null) return null;
+        return liquidSet.LiquidGif;
     }
 }
