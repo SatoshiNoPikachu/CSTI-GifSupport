@@ -172,7 +172,7 @@ public class CardDataGif : ScriptableObject
         else GifPlaySet.Clear(graphics.CardBG);
 
         gif = cardGif.GetCurrentSet(graphics);
-        if (gif is not null) gif.Apply(graphics.CardImage);
+        if (gif?.Gif is not null) gif.Apply(graphics.CardImage);
         else GifPlaySet.Clear(graphics.CardImage);
     }
 
